@@ -1,0 +1,14 @@
+inputs/
+outputs/
+frozen/
+
+.github/skills/user-flows/
+.github/skills/personas/
+.github/skills/metrics/
+.github/skills/jtbd/
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
