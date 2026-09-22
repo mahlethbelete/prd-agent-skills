@@ -1,12 +1,3 @@
-/home/Student/.local/lib/python3.9/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
-  warnings.warn(eol_message.format("3.9"), FutureWarning)
-/home/Student/.local/lib/python3.9/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
-  warnings.warn(eol_message.format("3.9"), FutureWarning)
-Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
-Scoring 'prd-writer' (1 files) with gemini-3.6-flash ...
-
-  transient error (503); retry 1/3 in 3s ...
-  transient error (503); retry 2/3 in 6s ...
 Skill: prd-writer
 Overall: 3.8 / 5
 
