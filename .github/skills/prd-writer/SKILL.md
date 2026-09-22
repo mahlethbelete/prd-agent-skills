@@ -40,7 +40,7 @@ Do not use it to:
 mandatory
 
 - Research report: source for the problem statement, stakeholders, and evidence behind every claim
-- System architecture diagram (SAD): source for the technical approach and dependencies
+- System architecture diagram (SAD): source for the technical approach and dependencies. It is an input only. Never embed, upload, or reproduce it in the document.
 
 Ask for either if it is not provided. Do not invent them.
 
@@ -62,6 +62,8 @@ These sections are owned by other skills:
 | `skills/competitor-analysis/SKILL.md` | Differentiators within Proposed solution |
 
 For each one: if the skill file exists and has content, load it and follow it to produce that section. If it is missing or empty, output `N/A: <skill name> not available` as that section, even when the user has supplied input files covering that content. A supplied input file is not a substitute for the skill. Never write a delegated section yourself under any circumstances.
+
+Skill paths are relative to the skills directory. When invoking a delegated skill, check `.github/skills/<skill-name>/SKILL.md` and `skills/<skill-name>/SKILL.md`. Load whichever exists. If neither does, the section is `N/A: <skill name> not available`.
 
 Task: Write a PRD for the product or feature the user describes, following the outline and guardrails below.
 
@@ -99,18 +101,6 @@ Every statement in the PRD must rest on something the user provided.
 
 **Step 6. Assemble and verify.** Order the sections as below and run the verification checklist.
 
-<!-- ## File output
-
-- Each run produces exactly one **new** file. Never open, append to, or
-  modify a previously generated PRD file.
-- Compute the path as `output/prds/<product-name-slug>_<YYYY-MM-DD_HHMM>.md`.
-- If `output/prds/` does not exist, create it.
-- If a file already exists at that exact path, append `_v2`, `_v3`, etc.
-  to the _filename_ — never to the file's content.
-- Before writing anything else, output one line in the chat response:
-  `Writing to: <full path>` — this must appear even if the PRD itself is
-  written to disk rather than shown in chat. -->
-
 ## Output destination
 
 - Each run creates exactly one **new** Notion page. Never edit or append to a previously generated PRD page.
@@ -118,6 +108,7 @@ Every statement in the PRD must rest on something the user provided.
 - Title it `<Product name> PRD <YYYY-MM-DD HHMM>`.
 - Before writing anything else, output one line in the chat: `Writing to Notion: <page title>`.
 - Return the page URL when finished.
+- Attempt the Notion page creation before concluding anything about availability. Only if the tool call itself returns an error, output the full PRD in chat instead, in the same 13 section order and following the same formatting rules. Prefix it with `Notion unavailable, returning PRD in chat`. Do not retry silently and do not return a partial document.
 
 # Output
 
@@ -145,6 +136,7 @@ Formatting:
 - The user flows section holds the Figma frame link the user flow skill returns, plus one line naming each flow. Do not embed or redraw the diagram.
 - Create a cover page with product name, date & time.
 - No horizontal rules, no conclusion, no footer, no disclaimers. The last section is Metrics to measure success and nothing follows it.
+- Render every table with the exact columns named in that section's System Requirements, in that order.
 
 # System Requirements
 
@@ -174,6 +166,7 @@ Requirements:
 - Do not invent statistics, user behaviors, urgency, market conditions, or demographic characteristics.
 - Distinguish documented facts from assumptions.
 - If evidence for a required element is unavailable, state "N/A: insufficient evidence" rather than filling the gap with inference.
+- Do not mention delegated sections, missing skills, or N/A markers. Those belong in their own sections.
 
 ## Problem Statement
 
@@ -192,7 +185,6 @@ Include:
 - Why now: Include only when supported by evidence.
 - Problem boundary: Clearly define what is and is not part of the problem.
 
-
 * Do not invent statistics, quotes, behaviors, workarounds, severity, frequency, market claims, or causal relationships.
 
 If evidence is missing, state:
@@ -207,16 +199,17 @@ Distinguish between:
 
 Before finalizing, verify:
 
-- One clear core problem is identified.- Problem is evidence-backed and traceable..
-- Affected population and context are clear..
-- Problem is measurable where practical..
-- Consequences are evidence-backed..
-- Existing workarounds are documented or explicitly unavailable..
-- Frequency, severity, and magnitude are sourced or marked unknown..
-- Problem boundaries are clear..
-- No solution or feature is prescribed..
-- Assumptions and research gaps are clearly labeled..
-- Problem can be traced to downstream JTBD, features, epics, and metrics..
+- One clear core problem is identified.
+- Problem is evidence-backed and traceable.
+- Affected population and context are clear.
+- Problem is measurable where practical.
+- Consequences are evidence-backed.
+- Existing workarounds are documented or explicitly unavailable.
+- Frequency, severity, and magnitude are sourced or marked unknown.
+- Problem boundaries are clear.
+- No solution or feature is prescribed.
+- Assumptions and research gaps are clearly labeled.
+- Problem can be traced to downstream JTBD, features, epics, and metrics.
 
 ### How Might We
 
@@ -237,7 +230,7 @@ Rules
 
 - Use one primary HMW for the core problem.
 - Keep it solution-agnostic — do not name an app, feature, technology, AI model, or implementation.
-- Do not introduce a new problem that is absent from the Problem Statement..
+- Do not introduce a new problem that is absent from the Problem Statement.
 - Do not embed assumptions or unsupported outcomes.
 - Keep the scope narrow enough to guide product decisions but broad enough to allow multiple solutions.
 
@@ -247,14 +240,14 @@ N/A: insufficient evidence
 
 Quality Gate
 
-- One focused HMW is stated..
-- It directly reflects the primary problem..
-- Affected population is clear..
-- Desired change and outcome are clear..
-- It is open-ended and solution-agnostic..
-- No feature, technology, or implementation is prescribed..
-- It does not introduce a new unsupported problem..
-- It traces back to research evidence..
+- One focused HMW is stated.
+- It directly reflects the primary problem.
+- Affected population is clear.
+- Desired change and outcome are clear.
+- It is open-ended and solution-agnostic.
+- No feature, technology, or implementation is prescribed.
+- It does not introduce a new unsupported problem.
+- It traces back to research evidence.
 
 ## Stakeholders
 
@@ -267,7 +260,7 @@ Include:
 - **Interest/need:** What they care about or expect.
 - **Influence:** Their ability to affect product decisions, adoption, delivery, or outcomes.
 - **Decision/accountability:** What they own, approve, provide, or are responsible for.
-- **Persona link:** Mark stakeholders who are also defined user personas.
+- **Persona link:** Yes or No for every stakeholder. Never omit this field. If the personas section is N/A, write `Unknown: personas not available`.
 
 Identify stakeholders from the research report, SAD, or confirmed product context.
 
@@ -340,7 +333,8 @@ Owned by the user-flows skill. Do not write this section yourself.
 
 ## Proposed solution epics (In scope)
 
-- Use a table with these columns: Epic name, description, persona, value to persona, implementation approach, system requirements, user requirements, acceptance criteria.
+- Use a table with these columns: Epic ID, epic name, description, persona, value to persona, RICE score, implementation approach, system requirements, user requirements, acceptance criteria.
+- Show the RICE score as a number in its own column, not in prose.
 - Order the rows by RICE score.
 - Write each acceptance criterion as Given / When / Then. Cover the happy path, at least one boundary, and at least one failure case.
 - Give each epic a unique ID in the form EP-001. Reference these IDs in the JTBD and metrics sections so every mapping can be checked.
@@ -378,8 +372,8 @@ Purpose
 
 Quality Gate
 
-- Every assumption is paired with a specific decision it underwrites..
-- No assumption restates something already evidenced elsewhere in the PRD..
+- Every assumption is paired with a specific decision it underwrites.
+- No assumption restates something already evidenced elsewhere in the PRD.
 - Each assumption is falsifiable.
 
 Failure Handling
@@ -391,6 +385,8 @@ Failure Handling
 ## Metrics to measure success
 
 Owned by the metrics skill. Do not write this section yourself.
+
+If the metrics skill is absent, output only the N/A line. Do not supply candidate, example, or reference metrics.
 
 - Tie every metric to a job to be done or problem statement - no vanity metrics.
 - Prefer 3-5 metrics, each with a target value and how you'll
@@ -536,6 +532,5 @@ The PRD writer must verify:
 28. No delegated section was independently rewritten when its skill was available.
 29. No source files were modified unnecessarily.
 30. The final PRD is internally consistent.
-
 
 If any applicable check fails, fix the issue and run the verification again before returning the PRD.
