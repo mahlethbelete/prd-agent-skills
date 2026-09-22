@@ -47,6 +47,7 @@ Ask for either if it is not provided. Do not invent them.
 **Optional**
 
 - Style guide: applies to tone and formatting only
+- Figma file: use the Figma file URL given in the workspace instructions. Pass it to the user flow skill. Without it, the user flows section is `N/A: no Figma file provided`.
 
 ## Dependencies
 
@@ -56,11 +57,11 @@ These sections are owned by other skills:
 | ------------------------------------- | ---------------------------------------- |
 | `skills/personas/SKILL.md`            | Personas                                 |
 | `skills/jtbd/SKILL.md`                | Job To Be Done                           |
-| `skills/user-flows/SKILL.md`          | User flows                               |
+| `skills/Generate-user-flows/SKILL.md` | User flows, as a Figma link              |
 | `skills/metrics/SKILL.md`             | Metrics to measure success               |
 | `skills/competitor-analysis/SKILL.md` | Differentiators within Proposed solution |
 
-For each one: if the file exists and has content, load it and follow it to produce that section. If it is missing or empty, output `N/A: <skill name> not available` as that section. Never write a delegated section yourself.
+For each one: if the skill file exists and has content, load it and follow it to produce that section. If it is missing or empty, output `N/A: <skill name> not available` as that section, even when the user has supplied input files covering that content. A supplied input file is not a substitute for the skill. Never write a delegated section yourself under any circumstances.
 
 Task: Write a PRD for the product or feature the user describes, following the outline and guardrails below.
 
@@ -70,7 +71,7 @@ Every statement in the PRD must rest on something the user provided.
 
 **Traceable**
 
-- Goals, pain points, workarounds and behaviours must trace to a specific line in the inputs.
+- Goals, pain points, workarounds and behaviours must trace to a specific line in the inputs. Traceability is a constraint on what may be written, not something the document displays. Never print evidence IDs, source labels, or citations in the PRD.
 
 **Permitted**
 
@@ -90,15 +91,15 @@ Every statement in the PRD must rest on something the user provided.
 
 **Step 2. Check dependencies.** For each skill in the dependency table, note whether the file exists and has content.
 
-**Step 3. Produce delegated sections.** In order: Personas, then Job To Be Done, then User flows and competitor differentiators. Pass the research report into Personas, personas into Job To Be Done, and personas plus jobs into User flows.
+**Step 3. Produce delegated sections.** In order: Personas, then Job To Be Done, then User flows and competitor differentiators. Pass the research report into Personas, personas into Job To Be Done, and personas plus jobs into User flows. Delegated skills are invoked non-interactively. If a skill asks a clarifying question, treat its section as `N/A: insufficient input` and record the question as the reason. Do not answer on its behalf.
 
-**Step 4. Write owned sections,** following the order in the Output list below.
+**Step 4. Write owned sections,** following the order in the Output list below. Before writing each section, re-read that section's entry under System Requirements. Long runs push earlier instructions out of context, so do not write a section from memory of having read its rules.
 
-**Step 5. Produce Metrics,** passing in the problems and jobs.
+**Step 5. Produce Metrics,** delegating to the metrics skill and passing in the problems and jobs.
 
 **Step 6. Assemble and verify.** Order the sections as below and run the verification checklist.
 
-## File output
+<!-- ## File output
 
 - Each run produces exactly one **new** file. Never open, append to, or
   modify a previously generated PRD file.
@@ -108,11 +109,19 @@ Every statement in the PRD must rest on something the user provided.
   to the _filename_ — never to the file's content.
 - Before writing anything else, output one line in the chat response:
   `Writing to: <full path>` — this must appear even if the PRD itself is
-  written to disk rather than shown in chat.
+  written to disk rather than shown in chat. -->
+
+## Output destination
+
+- Each run creates exactly one **new** Notion page. Never edit or append to a previously generated PRD page.
+- Create it as a child of the Notion page named `PRD`.
+- Title it `<Product name> PRD <YYYY-MM-DD HHMM>`.
+- Before writing anything else, output one line in the chat: `Writing to Notion: <page title>`.
+- Return the page URL when finished.
 
 # Output
 
-A single new markdown file (see "File output" above) with these sections, in this exact order:
+A single new Notion page (see "Output destination" above) with these sections, in this exact order:
 
 1. Cover page
 2. Introduction
@@ -128,11 +137,14 @@ A single new markdown file (see "File output" above) with these sections, in thi
 12. Assumptions
 13. Metrics to measure success
 
+Output only the 13 sections above. The verification checklist is run internally and must not appear in the document.
+
 Formatting:
 
 - Use a table for core features, JTBD, in and out of scope features and metrics.
-- Use a flow chart for the SAD. If the SAD is provided as an image or a format you cannot read as text, embed or reference it as given. Do not redraw it. Insert the user flows exactly as the user flow skill returns them.
+- The user flows section holds the Figma frame link the user flow skill returns, plus one line naming each flow. Do not embed or redraw the diagram.
 - Create a cover page with product name, date & time.
+- No horizontal rules, no conclusion, no footer, no disclaimers. The last section is Metrics to measure success and nothing follows it.
 
 # System Requirements
 
@@ -167,6 +179,8 @@ Requirements:
 
 Define the primary, evidence-backed problem that the product is intended to address. The problem must describe a user or business problem—not a solution, feature, assumption, symptom, or broad societal issue.
 
+Keep the whole section under 250 words. Cover the elements below compactly, in prose, not as separate headings. Omit any element the evidence does not support.
+
 Include:
 
 - Affected population: Who experiences the problem, based only on evidence.
@@ -178,7 +192,7 @@ Include:
 - Why now: Include only when supported by evidence.
 - Problem boundary: Clearly define what is and is not part of the problem.
 
-* Every substantive claim must trace to the research report, SAD, or an authoritative source using evidence IDs such as R1, S1, etc.
+
 * Do not invent statistics, quotes, behaviors, workarounds, severity, frequency, market claims, or causal relationships.
 
 If evidence is missing, state:
@@ -193,8 +207,7 @@ Distinguish between:
 
 Before finalizing, verify:
 
-- One clear core problem is identified..
-- Problem is evidence-backed and traceable..
+- One clear core problem is identified.- Problem is evidence-backed and traceable..
 - Affected population and context are clear..
 - Problem is measurable where practical..
 - Consequences are evidence-backed..
@@ -329,6 +342,8 @@ Owned by the user-flows skill. Do not write this section yourself.
 
 - Use a table with these columns: Epic name, description, persona, value to persona, implementation approach, system requirements, user requirements, acceptance criteria.
 - Order the rows by RICE score.
+- Write each acceptance criterion as Given / When / Then. Cover the happy path, at least one boundary, and at least one failure case.
+- Give each epic a unique ID in the form EP-001. Reference these IDs in the JTBD and metrics sections so every mapping can be checked.
 
 ## Out of scope features
 
@@ -521,5 +536,6 @@ The PRD writer must verify:
 28. No delegated section was independently rewritten when its skill was available.
 29. No source files were modified unnecessarily.
 30. The final PRD is internally consistent.
+
 
 If any applicable check fails, fix the issue and run the verification again before returning the PRD.

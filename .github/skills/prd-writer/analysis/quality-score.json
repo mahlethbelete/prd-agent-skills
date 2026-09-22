@@ -1,0 +1,32 @@
+{
+  "score": 86,
+  "justification": "The `prd-writer` skill is comprehensive, with clear purpose, strict evidence/traceability rules, explicit delegated-section ownership, a detailed section-by-section system requirements list, and a concrete Notion-first output destination. It lacks a few operational details (skill path resolution, Notion/auth failure handling, and minimal examples/templates) that reduce practical robustness but do not undermine the core authoring constraints or verification gates.",
+  "strengths": [
+    "Clear purpose and strong evidence/traceability rules preventing invention.",
+    "Explicit dependency table delegating Personas/JTBD/User flows/metrics and instructions for handling absent skills.",
+    "Detailed, prescriptive System Requirements for each PRD section (format, length, gates).",
+    "Stepwise process (Confirm inputs → Check dependencies → Produce delegated sections → Write owned sections → Assemble & verify).",
+    "Concrete output destination and required chat behavior (Write to Notion title line and return page URL)."
+  ],
+  "weaknesses": [
+    "[Traceability] No explicit, machine-actionable mechanism or checklist for how to verify each claim's trace to a specific input location (e.g., patterns to search / evidence-check algorithm); the guidance is normative but not operational.",
+    "[Delegated Sections] Dependency paths use `skills/...` relative names but the repository places skill files under `.github/skills/...` (path-resolution ambiguity). The skill does not state how to resolve alternative locations.",
+    "[Output Rules] Strong formatting rules exist but there are no small, concrete table templates or a minimal PRD skeleton example to ensure consistent output structure.",
+    "[Notion Output Requirements] The skill mandates creating a Notion page and returning its URL but omits any handling for missing credentials, API errors, or a fallback strategy (e.g., return full PRD in chat)."
+  ],
+  "fixes": [
+    {
+      "file": ".github/skills/prd-writer/SKILL.md",
+      "patch": "Insert after the \"Dependencies\" paragraph the following clarifying paragraph:\n\nNote on skill path resolution: Skill file paths are resolved first under skills and then under `skills/` at repository root. When invoking a delegated skill, check for `<repo>/.github/skills/<skill-name>/SKILL.md` and `<repo>/skills/<skill-name>/SKILL.md`. If found in either location, load that file; if not found, treat the delegated section as `N/A: <skill name> not available`.\n"
+    },
+    {
+      "file": ".github/skills/prd-writer/SKILL.md",
+      "patch": "Edit the \"Output destination\" section to add a failure/fallback paragraph (append immediately after the line \"Return the page URL when finished.\"):\n\nIf Notion credentials or API access are unavailable or the page creation fails, do not attempt to invent or delay the PRD. Instead: (1) output the full PRD content in chat (using the exact 13-section order and formatting rules), (2) prefix that output with `N/A: Notion unavailable — returning PRD in chat`, and (3) stop. If page creation partially succeeds but a URL is not returned, include `N/A: Notion page not created` followed by the full PRD content in chat.\n"
+    },
+    {
+      "file": ".github/skills/prd-writer/SKILL.md",
+      "patch": "Append a short \"Examples\" subsection near the end (before \"# Output\") with a minimal PRD skeleton and table templates to reduce formatting ambiguity. Insert the following text:\n\n## Examples (minimal skeleton)\n- Cover page: Product name — <Product name> PRD <YYYY-MM-DD HHMM>\n- Introduction: 2 short paragraphs (context, target population)\n- Problem statement: one compact prose paragraph (<=250 words)\n- Core tables (use these columns):\n  - Core features table: `Feature | Epic ID | Persona | Value`\n  - JTBD table: `Job step | Persona | Outcome | Pain/Workaround`\n  - In/Out of scope table: `Name | Description | Reason excluded`\n  - Metrics table: `Metric | Target | Measurement method | HEART classification`\n\nThese templates are advisory: follow the System Requirements, but if Notion formatting is required, map each table to a Notion table block using the same column headers.\n"
+    }
+  ],
+  "confidence": "high"
+}
